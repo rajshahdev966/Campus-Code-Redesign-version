@@ -9,5 +9,5 @@ export default function StudentPage() {
     return <StudentLoader onComplete={() => setInitializing(false)} />
   }
 
-  return <DashboardLayout onRefresh={() => setInitializing(true)} />
+  return <DashboardLayout />
 }

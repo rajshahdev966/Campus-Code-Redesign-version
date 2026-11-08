@@ -8,11 +8,11 @@ export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="page-width relative z-20 flex h-[89px] items-center justify-between gap-5 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+    <header className="workspace-header relative z-20 flex items-center justify-between gap-5 lg:grid lg:grid-cols-[1fr_auto_1fr]">
       <a
         href="#home"
         aria-label="CampusCode home"
-        className="flex h-[35px] w-[167px] shrink-0 items-center justify-center rounded-[2px] border-2 border-ink/45 bg-canvas px-1 transition-colors duration-400 hover:border-purple lg:justify-self-start"
+        className="flex w-[167px] shrink-0 items-center justify-center lg:justify-self-start"
       >
         <CampusLogo className="w-full" />
       </a>
@@ -37,9 +37,7 @@ export default function SiteHeader() {
         >
           Login
         </Link>
-        <ArrowLink href="/register" compact className="w-[143px]">
-          Join CampusCode
-        </ArrowLink>
+        <Link to="/register" className="rounded-full border border-ink/10 bg-lime px-5 py-3 text-[11px] font-bold transition-transform hover:-translate-y-0.5">Join CampusCode ↗</Link>
       </div>
       <button
         type="button"

@@ -1,18 +1,77 @@
-import { Link } from 'react-router'
+import { useRef } from "react";
+import { Link } from "react-router";
+import useRotatingWord, { buildWords } from "../../hooks/useRotatingWord";
+
 export default function JoinSection() {
+  const scope = useRef(null);
+  const {
+    word,
+    index,
+    selectWord,
+    nextWord,
+    paused,
+    togglePaused,
+    reducedMotion,
+    setInteracting,
+  } = useRotatingWord(scope);
+
   return (
-    <section id="join" className="grid-surface [background-size:60px_60px] relative isolate overflow-hidden border-b border-line bg-surface py-16 md:py-20">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
-        <div className="absolute size-[min(520px,75vw)] rounded-full border border-purple/15 bg-purple/[.025] shadow-[0_0_100px_#7665ff0c]" />
-        <div className="absolute bottom-16 right-[20%] size-56 rounded-full bg-purple/[.06] blur-[65px]" />
+    <section
+      ref={scope}
+      id="join"
+      className="join-section grid-surface border-b border-line"
+      aria-labelledby="join-heading"
+    >
+      <div className="join-orbit" aria-hidden="true">
+        {[0, 1, 2].map((person) => (
+          <span key={person} className={`join-avatar join-avatar--${person}`}>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <circle cx="12" cy="8" r="3.5" />
+              <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
+            </svg>
+          </span>
+        ))}
       </div>
-      <div data-reveal className="reveal mx-auto w-[90%] text-center">
-        <p className="eyebrow mb-10 text-[9px] tracking-[2px] text-purple">Ready?</p>
-        <h2 className="display-type md:tracking-[-9px] text-[clamp(36px,11vw,170px)] leading-[.8]">
-          Your next<br /><span className="outline-type">project</span><br />starts here.
+      <div
+        className="workspace-width join-content"
+        onMouseEnter={() => setInteracting(true)}
+        onMouseLeave={() => setInteracting(false)}
+        onFocusCapture={() => setInteracting(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget))
+            setInteracting(false);
+        }}
+      >
+        <p className="eyebrow text-purple">READY? / MAKE IT YOURS</p>
+        <h2 id="join-heading" className="join-title">
+          <span>Your next</span>
+          <button
+            type="button"
+            className="join-word-slot"
+            onClick={nextWord}
+            aria-label={`${word}. Tap to choose the next idea.`}
+          >
+            <span
+              key={word}
+              className="join-word"
+              data-word={word}
+              aria-hidden="true"
+            >
+              {word}
+            </span>
+          </button>
+          <span>starts here.</span>
         </h2>
-        <Link to="/register" className="group mt-10 inline-flex min-h-[50px] items-center justify-center gap-8 bg-ink px-6 text-[13px] font-bold tracking-[-.4px] text-paper transition-colors duration-400 hover:bg-purple">JOIN CAMPUSCODE<span aria-hidden="true" className="text-base text-lime transition-transform duration-400 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">↗</span></Link>
+        <Link to={`/register?track=${word}`} className="join-primary mt-3">
+          Start your {word}
+          <span aria-hidden="true">↗</span>
+        </Link>
       </div>
     </section>
-  )
+  );
 }

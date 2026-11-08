@@ -6,7 +6,6 @@ import ExperienceSection from '../components/ExperienceSection'
 import HowItWorksSection from '../components/HowItWorksSection'
 import HackathonsSection from '../components/HackathonsSection'
 import MissionSection from '../components/MissionSection'
-import CommunitySection from '../components/CommunitySection'
 import JoinSection from '../components/JoinSection'
 import SiteFooter from '../components/SiteFooter'
 import CursorGlow from '../components/CursorGlow'
@@ -25,7 +24,6 @@ export default function LandingPage() {
         <HowItWorksSection />
         <HackathonsSection />
         <MissionSection />
-        <CommunitySection />
         <JoinSection />
       </main>
       <SiteFooter />

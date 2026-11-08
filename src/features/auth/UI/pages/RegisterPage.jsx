@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import useDemoCaptcha from "../../hooks/useDemoCaptcha";
+import useFormBus from "../../hooks/useFormBus";
+import FormBus from "../components/FormBus";
 
 export default function RegisterPage() {
+  const [searchParams] = useSearchParams();
+  const tracks = ["project", "startup", "app", "game", "model"];
+  const selectedTrack = tracks.includes(searchParams.get("track")) ? searchParams.get("track") : "";
   const [visiblePasswords, setVisiblePasswords] = useState({
     password: false,
     confirmPassword: false,
@@ -15,8 +20,9 @@ export default function RegisterPage() {
     handleSubmit,
     getValues,
     resetField,
-    formState: { errors },
+    formState: { errors, isDirty, isValid, isSubmitting, submitCount },
   } = useForm({
+    mode: "onTouched",
     defaultValues: {
       fullName: "",
       email: "",
@@ -25,10 +31,14 @@ export default function RegisterPage() {
       confirmPassword: "",
       captcha: "",
       isAdult: false,
+      track: selectedTrack,
     },
   });
+  const { status, drive } = useFormBus({ errors, isDirty, isValid });
 
-  function onSubmit(data) {
+  async function onSubmit(data) {
+    setSubmitted(false);
+    if (!(await drive())) return;
     console.log("CampusCode registration form:", data);
     setSubmitted(true);
   }
@@ -48,19 +58,28 @@ export default function RegisterPage() {
           </span>
           <h2
             id="register-title"
-            className="mt-3 text-[40px] font-bold leading-none tracking-[-2.5px]"
+            className="auth-form-title"
           >
             REGISTER
           </h2>
-          <p className="mt-3 text-[11px] text-muted/80">
+          <p className="auth-form-description">
             Create your CampusCode account.
           </p>
         </div>
         <form
           noValidate
           onSubmit={handleSubmit(onSubmit)}
-          className="mt-6 space-y-4"
+          onInput={() => setSubmitted(false)}
+          aria-busy={isSubmitting}
+          className="auth-form"
         >
+          <fieldset disabled={isSubmitting} className="auth-form-fields">
+          {selectedTrack && <div>
+            <label htmlFor="register-track" className="auth-label">Your next build</label>
+            <select id="register-track" defaultValue={selectedTrack} className="auth-input mt-2 px-4 capitalize" {...register("track")}>
+              {tracks.map(track => <option key={track} value={track}>{track}</option>)}
+            </select>
+          </div>}
           <div>
             <label htmlFor="register-name" className="auth-label">
               Full name
@@ -212,7 +231,7 @@ export default function RegisterPage() {
                       [field.name]: !previous[field.name],
                     }))
                   }
-                  className="auth-password-toggle border border-line bg-canvas px-2.5 py-2"
+                  className="auth-password-toggle"
                 >
                   {visiblePasswords[field.name] ? "◉ HIDE" : "○ SHOW"}
                 </button>
@@ -243,7 +262,7 @@ export default function RegisterPage() {
                   resetField("captcha");
                   setSubmitted(false);
                 }}
-                className="font-mono text-[11px] font-medium tracking-[1px] text-purple"
+                className="auth-refresh"
                 aria-label="New CAPTCHA"
               >
                 ↻ NEW
@@ -273,7 +292,7 @@ export default function RegisterPage() {
             )}
           </div>
           <div>
-            <label className="flex cursor-pointer items-center gap-3 border border-line bg-canvas/60 px-3.5 py-3.5 text-[12px]">
+            <label className="auth-age-confirmation">
               <input
                 type="checkbox"
                 className="size-5 shrink-0 accent-purple"
@@ -298,29 +317,23 @@ export default function RegisterPage() {
               </p>
             )}
           </div>
-          <button type="submit" className="auth-submit gap-4">
-            <svg
-              viewBox="0 0 52 30"
-              aria-hidden="true"
-              className="w-11 shrink-0"
-            >
-              <rect width="52" height="30" rx="7" fill="white" />
-              <path d="M12 5H23L17 25H6Z" fill="var(--ink)" />
-              <path d="M26 5H37L31 25H20Z" fill="var(--purple)" />
-              <path d="M40 5H49L43 25H34Z" fill="var(--lime)" />
-            </svg>
-            <span>Send verification code</span>
-            <span aria-hidden="true" className="text-lg text-lime">
+          <div>
+          <FormBus status={status} attempt={submitCount} />
+          <button type="submit" disabled={isSubmitting} className="auth-submit gap-4">
+            <span>{isSubmitting ? "Submitting…" : "Send verification code"}</span>
+            <span aria-hidden="true" className="text-lg text-ink">
               ↗
             </span>
           </button>
-          <p role="status" className="font-mono text-[9px] text-purple">
+          </div>
+          </fieldset>
+          <p role="status" className="auth-feedback">
             {submitted
               ? "Demo data logged to the console. No verification email was sent."
               : ""}
           </p>
         </form>
-        <div className="mt-6 flex items-center justify-between gap-4 border-t border-line pt-6 font-mono text-[8px] uppercase">
+        <div className="auth-switch">
           <span className="text-muted">Already have an account?</span>
           <Link to="/login" className="text-purple hover:underline">
             Login →

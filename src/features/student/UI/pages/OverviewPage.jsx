@@ -1,34 +1,240 @@
-import { Link, useOutletContext } from 'react-router'
-import StudentAvatar from '../components/StudentAvatar'
-import DashboardIcon from '../components/DashboardIcon'
+import { useState } from 'react'
+import { Link, useOutletContext } from "react-router";
+import DashboardIcon from "../components/DashboardIcon";
 
 export default function OverviewPage() {
-  const { events, joinedEvents, announcements, studentProfile } = useOutletContext()
-  const featuredEvent = events[0]
-  const ongoing = joinedEvents.filter(event => event.status === 'Live').length
-  const stats = [{ label: 'Registered', value: joinedEvents.length }, { label: 'Ongoing', value: ongoing }, { label: 'Completed', value: 0 }, { label: 'Certificates', value: 0 }]
+  const { events, joinedEvents, announcements, studentProfile } =
+    useOutletContext();
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false)
+  const featuredEvent = events[0];
+  const ongoing = joinedEvents.filter(
+    (event) => event.status === "Live",
+  ).length;
+  const stats = [
+    { label: "Registered", value: joinedEvents.length },
+    { label: "Ongoing", value: ongoing },
+    { label: "Completed", value: 0 },
+    { label: "Certificates", value: 0 },
+  ];
+  const journey = [
+    { label: "Hackathons", icon: "trophy", value: joinedEvents.length },
+    { label: "Ongoing", icon: "bolt", value: ongoing },
+    { label: "Completed", icon: "check", value: 0 },
+    { label: "Certificates", icon: "award", value: 0 },
+  ];
+  const tools = [
+    { label: "HACKMATE", path: "/student/hackmate", icon: "user" },
+    { label: "IDEACHECK", path: "/student/ideacheck", icon: "sparkles" },
+    { label: "RULEBOT", path: "/student", icon: "bot" },
+  ];
 
   return (
     <>
-      <div className="mb-9"><p className="dashboard-kicker">Student workspace / live</p><h1 className="dashboard-heading mt-2">WELCOME BACK, <span className="border-b-[5px] border-lime text-purple">{studentProfile.firstName.toUpperCase()}</span>.</h1><p className="mt-3 text-[14px] text-muted">Your CampusCode activity, events, and student workspace — all in one place.</p></div>
-      <section className="relative isolate overflow-hidden border border-line bg-paper p-6 sm:p-[38px]">
-        <div aria-hidden="true" className="absolute right-[3%] top-[8%] -z-10 size-[400px] rounded-full bg-lime/10 blur-[65px]" />
-        <div className="grid items-center gap-8 md:grid-cols-[1.5fr_.85fr]">
-          <div><p className="dashboard-kicker mb-3">Build · learn · collaborate</p><h2 className="text-[42px] font-bold leading-tight tracking-[-2.5px] sm:text-[52px]">{featuredEvent.title}</h2><p className="mt-3 max-w-[600px] text-[13px] leading-[1.7] text-muted">{featuredEvent.description}</p><Link to="/student/events?event=rebuild-26" className="dashboard-button mt-7">Open event <span aria-hidden="true">↗</span></Link></div>
-          <div aria-hidden="true" className="flex items-center justify-center gap-4 py-6 md:justify-end"><StudentAvatar className="size-24 rounded-full shadow-[0_12px_30px_#11111115]" /><span className="event-monogram size-16 text-[22px]">RE</span></div>
+      <div className="mb-7">
+        <p className="dashboard-kicker">Student workspace / live</p>
+        <h1 className="dashboard-heading mt-2">
+          WELCOME BACK,{" "}
+          <span className="border-b-[5px] border-lime text-purple">
+            {studentProfile.firstName.toUpperCase()}
+          </span>
+          .
+        </h1>
+        <p className="mt-3 text-[14px] text-muted">
+          Your CampusCode activity, events, and student workspace — all in one
+          place.
+        </p>
+      </div>
+      <section
+        className="overview-ticket"
+        aria-labelledby="featured-event-title"
+      >
+        <div className="overview-ticket-stub" aria-hidden="true">
+          <strong>{featuredEvent.initials}</strong>
+          <span>{featuredEvent.title}</span>
+        </div>
+        <div className="overview-ticket-body">
+          <p className="dashboard-kicker mb-2">Build · learn · collaborate</p>
+          <h2 id="featured-event-title">{featuredEvent.title}</h2>
+          <p id="featured-event-description" className="overview-ticket-description" data-expanded={descriptionExpanded}>
+            {featuredEvent.description}
+          </p>
+          <button type="button" className="dashboard-text-link mt-3" aria-expanded={descriptionExpanded} aria-controls="featured-event-description" onClick={() => setDescriptionExpanded(value => !value)}>{descriptionExpanded ? 'Show less' : 'Show more'}</button>
+        </div>
+        <div className="overview-ticket-action">
+          <Link
+            to="/student/events?event=rebuild-26"
+            className="dashboard-button"
+          >
+            Open event <span aria-hidden="true">↗</span>
+          </Link>
         </div>
       </section>
-      <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4">{stats.map(stat => <section key={stat.label} className="border border-line bg-paper px-[22px] py-6"><h2 className="dashboard-label text-muted">{stat.label}</h2><p className="mt-3 text-[38px] font-semibold leading-none tracking-[-2px]">{stat.value}</p><p className="dashboard-label mt-3 text-muted/70">Your activity</p></section>)}</div>
-      <section className="dashboard-panel mt-8"><div className="flex items-center justify-between gap-4"><h2 className="dashboard-label">03 / Discover events</h2><Link to="/student/events" className="dashboard-text-link">View all ↗</Link></div><div className="mt-8 grid gap-2.5 md:grid-cols-3">{events.map(event => <article key={event.id} className="border border-line bg-canvas/60 p-4"><div className="flex items-center gap-3"><span className={`event-monogram size-10 shrink-0 text-sm ${event.theme === 'dark' ? 'event-monogram-dark' : ''}`}>{event.initials}</span><div><p className="font-mono text-[9px] tracking-[.5px] text-muted">{event.category}</p><h3 className="mt-1 text-[12px] font-bold">{event.title}</h3><p className="mt-1 font-mono text-[9px] text-muted">{event.id === 'rebuild-26' ? <>{event.date}<br />Individual participation</> : '—'}</p></div></div>{event.joined ? <span className="mt-4 inline-flex border border-line bg-paper px-3 py-2 text-[9px] font-extrabold text-muted/70">JOINED</span> : <Link to={`/student/events?event=${event.id}`} className="mt-4 inline-flex border border-line bg-paper px-3 py-2 text-[9px] font-extrabold text-muted transition-colors hover:border-purple hover:text-purple">JOIN NOW ↗</Link>}</article>)}</div></section>
-      <div className="mt-5 grid gap-4 lg:grid-cols-3">
-        <section className="dashboard-panel min-h-[325px]"><div className="flex justify-between gap-4"><h2 className="dashboard-label">Upcoming deadlines</h2><Link to="/student/events" className="dashboard-text-link">View all ↗</Link></div><div className="mt-14 text-center"><p className="text-sm font-semibold">No deadlines yet.</p><p className="mt-2 text-[12px] leading-5 text-muted">Join an event and your upcoming dates will appear here.</p><Link to="/student/events" className="dashboard-button mt-4 bg-[#adf57a] text-[10px]">Browse events ↗</Link></div></section>
-        <section className="dashboard-panel min-h-[325px] border-lime/40 bg-linear-to-br from-[#f5fae6] to-paper"><p className="dashboard-label text-muted">AI spotlight</p><h2 className="mt-8 text-[20px] font-bold tracking-[-.7px]">Your AI teammates are ready.</h2><p className="mt-3 text-[13px] leading-6 text-muted">Check your idea, find teammates, or ask the rules — right from here.</p><div className="mt-4 flex flex-wrap gap-2">{[{ label: 'IDEACHECK', path: '/student/ideacheck', icon: 'sparkles' }, { label: 'HACKMATE', path: '/student/hackmate', icon: 'user' }, { label: 'RULEBOT', path: '/student', icon: 'bot' }].map(item => <Link key={item.label} to={item.path} className="flex items-center gap-2 rounded-xl border border-lime/40 bg-[#eff5d9] px-3 py-2.5 text-[10px] font-extrabold tracking-[.8px] text-[#6d8529]"><DashboardIcon name={item.icon} />{item.label}</Link>)}</div></section>
-        <section className="dashboard-panel min-h-[325px]"><div className="flex justify-between gap-4"><h2 className="dashboard-label">Your journey</h2><Link to="/student" className="dashboard-text-link">Certificates ↗</Link></div><div className="mt-10 space-y-3">{[{ label: 'Hackathons', icon: 'trophy', value: joinedEvents.length }, { label: 'Ongoing', icon: 'bolt', value: ongoing }, { label: 'Completed', icon: 'check', value: 0 }, { label: 'Certificates', icon: 'award', value: 0 }].map(item => <div key={item.label}><div className="flex items-center gap-2.5"><span className="flex size-8 items-center justify-center rounded-lg border border-lime/40 bg-[#eff5d9] text-[#718b2b]"><DashboardIcon name={item.icon} /></span><div className="h-[7px] flex-1 overflow-hidden rounded-full bg-[#edeee6]"><div className="h-full rounded-full bg-linear-to-r from-purple to-lime" style={{ width: item.value ? '100%' : '6%' }} /></div><span className="w-8 text-right text-[16px] font-bold">{item.value}</span></div><p className="mt-1 text-[9px] font-bold uppercase tracking-[2px] text-muted/70">{item.label}</p></div>)}</div></section>
+      <div className="overview-stats">
+        {stats.map((stat) => (
+          <section key={stat.label} className="overview-stat">
+            <p className="overview-stat-value">{stat.value}</p>
+            <div>
+              <h2 className="dashboard-label">{stat.label}</h2>
+              <p className="overview-stat-caption">Your activity</p>
+            </div>
+          </section>
+        ))}
       </div>
-      <div className="mt-5 grid gap-4 lg:grid-cols-2">
-        <section className="dashboard-panel min-h-[280px]"><div className="flex justify-between gap-4"><h2 className="dashboard-label">01 / Current activity</h2><Link to="/student/my-events" className="dashboard-text-link">View events ↗</Link></div><div className="mt-10 flex flex-wrap items-start justify-between gap-5"><p className="max-w-44 break-all font-mono text-[10px] font-bold text-lime">e2798ce3-a1b5-4806-9147-4d9f10c52ef1</p><h3 className="text-[28px] font-bold leading-tight tracking-[-1.5px]">ReBuild<br />'26</h3><div className="flex flex-wrap gap-2"><span className="border border-ink px-3 py-2 text-[11px]">LIVE</span><span className="border border-ink px-3 py-2 text-[11px] font-bold text-muted">06 NOV 2026</span></div></div></section>
-        <section className="dashboard-panel min-h-[280px]"><div className="flex justify-between gap-4"><h2 className="dashboard-label">02 / Notifications</h2><Link to="/student/communications" className="dashboard-text-link">Open all ↗</Link></div><div className="mt-8">{announcements.map(item => <article key={item.id} className="relative border-b border-line py-3 pl-5 last:border-0"><span aria-hidden="true" className="absolute left-0 top-5 size-1.5 rounded-full bg-[#adf57a]" /><div className="flex justify-between gap-4"><h3 className="text-[12px] font-bold">{item.title}</h3><time className="shrink-0 font-mono text-[9px] text-muted">{item.date}</time></div><p className="mt-1 text-[12px] leading-[1.5] text-muted">{item.body}</p></article>)}</div></section>
+
+      <div className="overview-workspace">
+        <div className="overview-column">
+          <section className="dashboard-panel overview-activity">
+            <div className="overview-panel-heading">
+              <h2>01 / Current activity</h2>
+              <Link to="/student/my-events" className="dashboard-text-link">
+                View events ↗
+              </Link>
+            </div>
+            <div className="overview-activity-row">
+              <h3>ReBuild '26</h3>
+              <span className="overview-live">
+                <span aria-hidden="true" />
+                LIVE
+              </span>
+              <span className="overview-activity-date">06 NOV 2026</span>
+            </div>
+            <p className="overview-activity-id">
+              e2798ce3-a1b5-4806-9147-4d9f10c52ef1
+            </p>
+          </section>
+
+          <section className="dashboard-panel overview-discover">
+            <div className="overview-panel-heading">
+              <h2>03 / Discover events</h2>
+              <Link to="/student/events" className="dashboard-text-link">
+                View all ↗
+              </Link>
+            </div>
+            <div className="overview-event-list">
+              {events.map((event) => (
+                <article key={event.id} className="overview-event-ticket">
+                  <div className="overview-event-stub" aria-hidden="true">
+                    {event.initials}
+                  </div>
+                  <div className="overview-event-copy">
+                    <p>{event.category}</p>
+                    <h3>{event.title}</h3>
+                    <p>
+                      {event.id === "rebuild-26" ? (
+                        <>{event.date} · Individual participation</>
+                      ) : (
+                        "—"
+                      )}
+                    </p>
+                  </div>
+                  <div className="overview-event-action">
+                    {event.joined ? (
+                      <span className="overview-joined">JOINED</span>
+                    ) : (
+                      <Link
+                        to={`/student/events?event=${event.id}`}
+                        className="dashboard-outline-button"
+                      >
+                        JOIN NOW ↗
+                      </Link>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="dashboard-panel overview-deadlines">
+            <div className="overview-panel-heading">
+              <h2>Upcoming deadlines</h2>
+              <Link to="/student/events" className="dashboard-text-link">
+                View all ↗
+              </Link>
+            </div>
+            <div className="overview-deadline-row">
+              <DashboardIcon name="clock" />
+              <p>No deadlines yet.</p>
+              <Link to="/student/events" className="dashboard-text-link">
+                Browse events ↗
+              </Link>
+            </div>
+            <p className="overview-supporting-copy">
+              Join an event and your upcoming dates will appear here.
+            </p>
+          </section>
+        </div>
+
+        <div className="overview-column">
+          <section className="dashboard-panel overview-updates">
+            <div className="overview-panel-heading">
+              <h2>02 / Notifications</h2>
+              <Link
+                to="/student/communications"
+                className="dashboard-text-link"
+              >
+                Open all ↗
+              </Link>
+            </div>
+            <div>
+              {announcements.map((item) => (
+                <details key={item.id} className="overview-announcement">
+                  <summary>
+                    <span className="overview-update-icon" aria-hidden="true">
+                      <DashboardIcon name="bell" />
+                    </span>
+                    <h3>{item.title}</h3>
+                    <time>{item.date}</time>
+                    <span className="overview-update-toggle" aria-hidden="true">
+                      +
+                    </span>
+                  </summary>
+                  <p>{item.body}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+
+          <section className="dashboard-panel overview-journey">
+            <div className="overview-panel-heading">
+              <h2>Your journey</h2>
+              <Link to="/student" className="dashboard-text-link">
+                Certificates ↗
+              </Link>
+            </div>
+            <div className="overview-journey-counts">
+              {journey.map((item) => (
+                <div key={item.label}>
+                  <DashboardIcon name={item.icon} />
+                  <strong>{item.value}</strong>
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          
+
+          <section className="dashboard-panel overview-ai">
+            <p className="dashboard-label text-muted">AI spotlight</p>
+            <h2 className="overview-ai-title">Your AI teammates are ready.</h2>
+            <p className="overview-supporting-copy">
+              Check your idea, find teammates, or ask the rules — right from
+              here.
+            </p>
+            <div className="overview-ai-tools">
+              {tools.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  className="dashboard-tool-link"
+                >
+                  <DashboardIcon name={item.icon} />
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </>
-  )
+  );
 }

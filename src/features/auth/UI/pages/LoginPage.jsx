@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import useDemoCaptcha from "../../hooks/useDemoCaptcha";
+import useFormBus from "../../hooks/useFormBus";
+import FormBus from "../components/FormBus";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,10 +13,13 @@ export default function LoginPage() {
     register,
     handleSubmit,
     resetField,
-    formState: { errors },
-  } = useForm({ defaultValues: { email: "", password: "", captcha: "" } });
+    formState: { errors, isDirty, isValid, isSubmitting, submitCount },
+  } = useForm({ mode: "onTouched", defaultValues: { email: "", password: "", captcha: "" } });
+  const { status, drive } = useFormBus({ errors, isDirty, isValid });
 
-  function onSubmit(data) {
+  async function onSubmit(data) {
+    setSubmitted(false);
+    if (!(await drive())) return;
     console.log("CampusCode login form:", data);
     setSubmitted(true);
   }
@@ -34,19 +39,22 @@ export default function LoginPage() {
           </span>
           <h2
             id="login-title"
-            className="mt-3 text-[40px] font-bold leading-none tracking-[-2.5px]"
+            className="auth-form-title"
           >
             LOGIN
           </h2>
-          <p className="mt-3 text-[11px] text-muted/80">
+          <p className="auth-form-description">
             Access your CampusCode account.
           </p>
         </div>
         <form
           noValidate
           onSubmit={handleSubmit(onSubmit)}
-          className="group mt-7 space-y-5"
+          onInput={() => setSubmitted(false)}
+          aria-busy={isSubmitting}
+          className="auth-form group"
         >
+          <fieldset disabled={isSubmitting} className="auth-form-fields">
           <div>
             <label htmlFor="login-email" className="auth-label">
               Email address
@@ -130,7 +138,7 @@ export default function LoginPage() {
               />
               <button
                 type="button"
-                className="font-mono text-[8px] text-muted transition-colors hover:text-purple"
+                className="auth-refresh"
                 aria-label="New CAPTCHA"
                 onClick={() => {
                   refreshCaptcha();
@@ -165,59 +173,20 @@ export default function LoginPage() {
             )}
           </div>
           <div>
-            <div
-              aria-hidden="true"
-              className="relative mb-1 flex h-16 items-center justify-between overflow-hidden rounded-xl border border-dashed border-line bg-canvas/40 px-3"
-            >
-              <div className="flex items-start transition-transform duration-700 group-focus-within:translate-x-3">
-                <svg viewBox="0 0 86 44" className="mt-1 w-[76px]">
-                  <rect
-                    x="1"
-                    y="4"
-                    width="83"
-                    height="34"
-                    rx="9"
-                    fill="var(--ink)"
-                  />
-                  <path d="M17 10H30L23 29H10Z" fill="white" />
-                  <path d="M35 10H48L41 29H28Z" fill="var(--purple)" />
-                  <path d="M53 10H66L59 29H46Z" fill="var(--lime)" />
-                  <circle
-                    cx="20"
-                    cy="38"
-                    r="6"
-                    fill="var(--ink)"
-                    stroke="white"
-                    strokeWidth="2"
-                  />
-                  <circle
-                    cx="66"
-                    cy="38"
-                    r="6"
-                    fill="var(--ink)"
-                    stroke="white"
-                    strokeWidth="2"
-                  />
-                </svg>
-                <span className="ml-2 font-mono text-xs text-muted">Zzz</span>
-              </div>
-              <span className="self-start pt-3 font-mono text-[10px] font-semibold tracking-[1px] text-muted">
-                READY
-              </span>
-              <span className="absolute right-3 top-4 h-9 w-[3px] bg-lime" />
-            </div>
-            <button type="submit" className="auth-submit">
-              <span>LOGIN</span>
-              <span aria-hidden="true" className="text-lg text-lime">
+            <FormBus status={status} attempt={submitCount} />
+            <button type="submit" disabled={isSubmitting} className="auth-submit">
+              <span>{isSubmitting ? "Submitting…" : "LOGIN"}</span>
+              <span aria-hidden="true" className="text-lg text-ink">
                 ↗
               </span>
             </button>
           </div>
-          <p role="status" className="min-h-4 font-mono text-[9px] text-purple">
+          </fieldset>
+          <p role="status" className="auth-feedback">
             {submitted ? "Demo form data logged to the console." : ""}
           </p>
         </form>
-        <div className="mt-6 flex items-center justify-between gap-4 border-t border-line pt-6 font-mono text-[8px] uppercase">
+        <div className="auth-switch">
           <span className="text-muted">Don’t have an account?</span>
           <Link to="/register" className="text-purple hover:underline">
             Create account →
