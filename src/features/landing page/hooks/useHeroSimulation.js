@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
@@ -8,8 +8,6 @@ gsap.registerPlugin(useGSAP, MotionPathPlugin)
 export default function useHeroSimulation(scope, exploreRef) {
   const timeline = useRef(null)
   const playback = useRef(null)
-  const userPaused = useRef(false)
-  const [paused, setPaused] = useState(false)
 
   useGSAP(() => {
     const scene = scope.current
@@ -61,7 +59,7 @@ export default function useHeroSimulation(scope, exploreRef) {
       tl.call(() => { if (!accented) { accented = true; cta.play() } }, [], 4.65)
 
       const syncPlayback = () => {
-        const running = visible && !document.hidden && !userPaused.current
+        const running = visible && !document.hidden
         tl.paused(!running)
         entrance.paused(!running)
         if (accented && cta.totalProgress() < 1) cta.paused(!running)
@@ -82,21 +80,12 @@ export default function useHeroSimulation(scope, exploreRef) {
     return () => media.revert()
   }, { scope })
 
-  function togglePlayback() {
-    if (!timeline.current) return
-    userPaused.current = !userPaused.current
-    setPaused(userPaused.current)
-    playback.current?.()
-  }
-
   function selectStage(stage) {
     if (!timeline.current) return
-    userPaused.current = true
-    setPaused(true)
     const preview = { discover: .8, build: 4.1, ship: 5.2 }
-    timeline.current.totalTime(preview[stage], true).pause()
+    timeline.current.totalTime(preview[stage], true)
     playback.current?.()
   }
 
-  return { paused, togglePlayback, selectStage }
+  return { selectStage }
 }

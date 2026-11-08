@@ -119,8 +119,6 @@
   .scene-step { position: relative; border: 1px solid var(--border); border-radius: 999px; background: var(--white); padding: 10px 15px; font-size: 11px; font-weight: 650; }
   .scene-step:first-of-type { background: var(--lime); }
   .scene-caption { display: flex; justify-content: space-between; align-items: center; padding: 10px 4% 0; font-family: var(--font-label); font-size: 9px; color: var(--muted); }
-  .scene-playback { min-width: 60px; min-height: 32px; border: 1px solid var(--border); border-radius: 999px; padding: 5px 9px; }
-  .scene-playback:hover { color: var(--ink); background: var(--white); }
   .scene-motion-label { display: none; }
   .scene-particles { position: absolute; z-index: 4; right: 20%; top: 365px; pointer-events: none; }
   .scene-particles > span { position: absolute; width: 5px; height: 5px; border-radius: 50%; opacity: 0; }
@@ -244,8 +242,6 @@
   .atom-scene { display: block; width: 112%; max-width: 640px; margin: -40px -6% -24px; overflow: visible; }
   .atom-ring { stroke: var(--purple); stroke-width: 1; stroke-opacity: .35; }
   .atom-ring-1 { stroke: var(--lime); stroke-opacity: .5; }
-  .atom-playback { min-height: 32px; min-width: 60px; padding: 5px 9px; border: 1px solid var(--border); border-radius: var(--corner-pill); }
-  .atom-playback:hover { background: var(--white); color: var(--ink); }
   .atom-reduced-label { display: none; }
 }
 @media (max-width: 899px) {
@@ -255,7 +251,6 @@
   .atom-scene { width: 100%; margin: -20px 0 -20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .atom-playback { display: none; }
   .atom-reduced-label { display: inline; }
 }
 @media (max-width: 1100px) and (min-width: 900px) {
@@ -294,7 +289,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-scene .scene-float { animation: none; }
-  .scene-playback, [data-pulse], [data-cursor] { display: none; }
+  [data-pulse], [data-cursor] { display: none; }
   .scene-motion-label { display: inline; }
   .scene-step:last-of-type { background: var(--lime); }
 }
@@ -569,9 +564,6 @@
   .hero-enter {
     animation: enter 1.05s cubic-bezier(0.2, 0.65, 0.3, 1) both;
   }
-  .marquee-track {
-    animation: marquee 32s linear infinite;
-  }
   .orbit-spin {
     animation: spin 45s linear infinite;
   }
@@ -724,7 +716,7 @@
   .journey-connector--vertical { left: 52px; }
 }
 
-.join-section { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(64px, 8vw, 112px); background-color: var(--bg); background-size: 60px 60px; }
+.join-section { position: relative; isolation: isolate; overflow: hidden; padding-block: var(--section-space); background-color: var(--bg); background-size: 60px 60px; }
 .join-content { position: relative; text-align: center; }
 .join-content > .eyebrow { margin-bottom: 28px; }
 .join-title { font-size: clamp(42px, 8.5vw, 120px); font-weight: 900; line-height: .96; letter-spacing: -.065em; text-transform: uppercase; }
@@ -742,7 +734,6 @@
 .join-primary:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
 .join-login { display: block; width: fit-content; margin: 26px auto 0; font-size: 12px; color: var(--muted); }
 .join-login span { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
-.join-motion { display: block; margin: 20px auto 0; padding: 5px; font-family: var(--font-label); font-size: 9px; color: var(--muted); cursor: pointer; }
 .join-content :is(button, a):focus-visible { outline: 2px solid var(--purple); outline-offset: 5px; }
 .join-orbit { position: absolute; z-index: -1; pointer-events: none; width: min(650px, 80vw); aspect-ratio: 1; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 1px solid color-mix(in srgb, var(--purple) 22%, transparent); border-radius: 50%; background: radial-gradient(circle, var(--purple-soft), transparent 68%); }
 .join-avatar { position: absolute; display: grid; place-items: center; width: 34px; height: 34px; color: var(--ink); background: var(--bg); border: 1px solid var(--purple); border-radius: 50%; }
@@ -1110,4 +1101,85 @@
   .badge-stage, .badge-suspension { position: static !important; width: 100% !important; padding: 0 !important; margin: 0 !important; perspective: none !important; transform: none !important; }
   .badge-card.student-id-card { position: absolute; left: 16px; top: 16px; width: 360px; max-width: calc(100vw - 32px); transform: none !important; box-shadow: none !important; padding: 18px 0 0; }
   .badge-profile { margin-top: 20px; }
+}
+
+@layer components {
+  .mission-section { position: relative; padding-block: var(--section-space); background: var(--bg); }
+  .mission-layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
+  .mission-copy { position: relative; z-index: 1; }
+  .mission-copy > .eyebrow { font-size: 10px; letter-spacing: .08em; margin-bottom: 34px; }
+  .mission-heading { font-size: clamp(46px, 5.5vw, 84px); font-weight: 900; line-height: .98; letter-spacing: -.065em; text-transform: uppercase; }
+  .mission-heading > span { display: block; }
+  .mission-heading > span:first-child { white-space: nowrap; }
+  .mission-heading em { font-style: normal; }
+  .mission-builders { position: relative; width: fit-content; }
+  .mission-builders > svg { display: block; width: 100%; height: 12px; margin-top: 7px; overflow: visible; }
+  .mission-builders path { fill: none; stroke: var(--lime); stroke-width: 7; stroke-linecap: round; }
+  .mission-description { max-width: 420px; margin-top: 32px; font-size: 15px; line-height: 1.8; color: var(--muted); }
+  .mission-canvas { position: relative; isolation: isolate; min-width: 0; }
+  .mission-canvas::before { content: ''; position: absolute; z-index: -1; inset: 0 -4%; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 32px 32px; mask-image: radial-gradient(ellipse at center, rgb(0 0 0 / 45%) 10%, transparent 70%); pointer-events: none; }
+  .mission-art { display: block; width: 100%; height: auto; overflow: visible; }
+  .mission-connections { stroke-width: 2; }
+}
+@media (min-width: 900px) and (max-width: 1100px) {
+  .mission-heading { font-size: 5.2vw; }
+  .mission-layout { gap: 24px; }
+}
+@media (max-width: 899px) {
+  .mission-layout { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .mission-heading { font-size: clamp(46px, 9vw, 76px); }
+  .mission-description { max-width: 480px; font-size: 14px; margin-top: 26px; }
+  .mission-canvas { width: min(100%, 500px); justify-self: center; }
+}
+@media (max-width: 420px) {
+  .mission-heading { font-size: clamp(36px, 10.8vw, 46px); }
+  .mission-copy > .eyebrow { margin-bottom: 26px; }
+  .mission-builders > svg { height: 9px; }
+}
+
+
+@layer components {
+  .keyword-marquee { position: relative; padding-block: 19px; border-block: 1px solid var(--border); background: var(--white); }
+  .keyword-marquee-window { overflow: hidden; width: 100%; mask-image: linear-gradient(90deg, transparent, var(--ink) 3%, var(--ink) 96%, transparent); }
+  .keyword-marquee-track { display: flex; width: max-content; animation: marquee 44s linear infinite; }
+  .keyword-marquee-group { display: flex; flex-shrink: 0; align-items: center; justify-content: space-around; min-width: 100vw; }
+  .keyword-marquee-item { display: inline-flex; align-items: center; flex-shrink: 0; gap: 28px; padding-right: 40px; font-size: 16px; font-weight: 650; line-height: 1.5; letter-spacing: -.025em; color: var(--ink); }
+  .keyword-marquee-item > svg { width: 13px; height: 13px; flex-shrink: 0; transition: transform var(--motion-normal) var(--motion-ease); }
+  .keyword-marquee[data-visible='false'] .keyword-marquee-track { animation-play-state: paused; }
+  .keyword-marquee:hover .keyword-marquee-item > svg { transform: rotate(45deg); }
+}
+@media (max-width: 639px) {
+  .keyword-marquee { padding-block: 17px; }
+  .keyword-marquee-item { font-size: 14px; gap: 22px; padding-right: 28px; }
+  .keyword-marquee-item > svg { width: 11px; height: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .keyword-marquee { padding: 16px 20px; }
+  .keyword-marquee-window { width: 100%; mask-image: none; }
+  .keyword-marquee-track { width: 100%; animation: none; transform: none; }
+  .keyword-marquee-group { width: 100%; min-width: 0; flex-wrap: wrap; justify-content: center; gap: 12px 24px; }
+  .keyword-marquee-group + .keyword-marquee-group, .keyword-marquee-group .keyword-marquee-item:nth-child(n + 6) { display: none; }
+  .keyword-marquee-item { padding-right: 0; gap: 18px; font-size: 12px; }
+  .keyword-marquee-item > svg { transition: none; transform: none !important; }
+}
+
+
+@layer components {
+  .landing-section { padding-block: var(--section-space); }
+  .outline-fill { width: fit-content; color: transparent; -webkit-text-stroke: 1px var(--purple); background-image: linear-gradient(var(--purple), var(--purple)); background-repeat: no-repeat; background-position: left center; background-size: 0% 100%; background-clip: text; -webkit-background-clip: text; transition: background-size 350ms var(--motion-ease); }
+  .outline-fill:is(:hover, :focus) { background-size: 100% 100%; }
+  .outline-fill:focus-visible { outline: 1px dashed var(--purple); outline-offset: 6px; }
+  .mission-heading em.outline-fill { color: transparent; }
+}
+.join-orbit-spin { position: absolute; inset: 0; border-radius: 50%; animation: join-orbit-turn 36s linear infinite; animation-play-state: paused; }
+.join-avatar { animation: join-avatar-upright 36s linear infinite; animation-play-state: paused; }
+.join-avatar--0 { left: 50%; top: 0; }
+.join-avatar--1 { left: 6.7%; top: 75%; }
+.join-avatar--2 { left: 93.3%; top: 75%; right: auto; }
+.join-section[data-orbit-running='true'] :is(.join-orbit-spin, .join-avatar) { animation-play-state: running; }
+@keyframes join-orbit-turn { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes join-avatar-upright { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .join-orbit-spin { animation: none; transform: none; }
+  .join-avatar { animation: none; transform: translate(-50%, -50%); }
 }

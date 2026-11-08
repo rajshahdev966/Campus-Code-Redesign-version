@@ -7,9 +7,9 @@ export default function HackathonsSection({ variant = "tickets" }) {
   return (
     <section
       id="hackathons"
-      className="border-b border-line bg-canvas py-20 md:py-24"
+      className="border-b border-line bg-canvas landing-section"
     >
-      <div className="workspace-width max-w-[1120px]">
+      <div className="workspace-width">
         <p className="mb-4 font-mono text-[10px] uppercase tracking-[.14em] text-purple">
           04 / The arena
         </p>

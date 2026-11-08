@@ -2,10 +2,10 @@ import { Link } from 'react-router'
 import useViewportVideo from '../../hooks/useViewportVideo'
 
 export default function ExperienceSection() {
-  const { videoRef, playing, muted, setPlaying, togglePlayback, toggleSound } = useViewportVideo()
+  const { videoRef, playing, muted, setPlaying, startPlayback, toggleSound } = useViewportVideo()
 
   return (
-    <section aria-label="The CampusCode experience" className="experience-section grid-surface border-b border-line bg-surface py-14 md:py-20">
+    <section aria-label="The CampusCode experience" className="experience-section grid-surface border-b border-line bg-surface landing-section">
       <div className="workspace-width">
         <div className="flex justify-between font-mono text-[9px] uppercase tracking-[.12em] text-muted">
           <span>02 / Experience</span><span>00:30</span>
@@ -42,7 +42,7 @@ export default function ExperienceSection() {
                 aria-label="What is CampusCode film"
               />
               <button type="button" onClick={toggleSound} className="experience-sound" aria-label={muted ? 'Unmute CampusCode film' : 'Mute CampusCode film'}>{muted ? 'Tap for sound' : 'Mute sound'}</button>
-              <button type="button" onClick={togglePlayback} aria-label={playing ? 'Pause the CampusCode film' : 'Play the CampusCode film'} className="experience-play">{playing ? 'Ⅱ' : '▶'}</button>
+              {!playing && <button type="button" onClick={startPlayback} aria-label="Play the CampusCode film" className="experience-play"><svg viewBox="0 0 16 16" className="size-3.5" fill="currentColor" aria-hidden="true"><path d="M4 2L13 8L4 14Z" /></svg></button>}
             </div>
           </div>
         </div>

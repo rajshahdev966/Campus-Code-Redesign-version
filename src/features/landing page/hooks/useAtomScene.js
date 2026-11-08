@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { orbitDuration, studentPoints } from '../state/atomGeometry'
@@ -7,8 +7,6 @@ gsap.registerPlugin(useGSAP)
 
 export default function useAtomScene(scope) {
   const controls = useRef(null)
-  const userPaused = useRef(false)
-  const [paused, setPaused] = useState(false)
 
   const { contextSafe } = useGSAP(() => {
     const section = scope.current
@@ -71,7 +69,7 @@ export default function useAtomScene(scope) {
       })
 
       function syncPlayback() {
-        const running = visible && !document.hidden && !userPaused.current
+        const running = visible && !document.hidden
         orbit?.paused(!running)
       }
 
@@ -125,11 +123,5 @@ export default function useAtomScene(scope) {
   const setEngaged = contextSafe(active => controls.current?.engage(active))
   const boost = contextSafe(() => controls.current?.boost())
 
-  function togglePlayback() {
-    userPaused.current = !userPaused.current
-    setPaused(userPaused.current)
-    controls.current?.syncPlayback()
-  }
-
-  return { paused, togglePlayback, setEngaged, boost }
+  return { setEngaged, boost }
 }

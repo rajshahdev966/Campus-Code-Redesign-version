@@ -23,7 +23,7 @@ export default function HeroSection() {
             </p>
             <h1 className="workspace-title">
               <span>Build</span>
-              <span className="text-purple">Compete</span>
+              <span className="outline-fill" tabIndex={0}>Compete</span>
               <span>
                 Ship<span className="text-purple">.</span>
               </span>
@@ -36,7 +36,7 @@ export default function HeroSection() {
               <a
                 ref={exploreRef}
                 href="#hackathons"
-                className="workspace-cta bg-purple"
+                className="workspace-cta bg-lime"
               >
                 Explore hackathons <span aria-hidden="true">↗</span>
               </a>

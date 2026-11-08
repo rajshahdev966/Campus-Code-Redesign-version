@@ -4,8 +4,6 @@ export const buildWords = ['project', 'startup', 'app', 'game', 'model']
 
 export default function useRotatingWord(scope) {
   const [index, setIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const [interacting, setInteracting] = useState(false)
   const [visible, setVisible] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(true)
 
@@ -34,15 +32,14 @@ export default function useRotatingWord(scope) {
   }, [scope])
 
   useEffect(() => {
-    if (!visible || paused || interacting || reducedMotion) return
+    if (!visible || reducedMotion) return
     const timer = window.setInterval(() => setIndex(value => (value + 1) % buildWords.length), 2400)
     return () => window.clearInterval(timer)
-  }, [index, visible, paused, interacting, reducedMotion])
+  }, [index, visible, reducedMotion])
 
   return {
-    word: buildWords[index], index, selectWord: setIndex,
+    word: buildWords[index],
     nextWord: () => setIndex(value => (value + 1) % buildWords.length),
-    paused, togglePaused: () => setPaused(value => !value),
-    reducedMotion, setInteracting,
+    running: visible && !reducedMotion,
   }
 }
